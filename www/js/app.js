@@ -40,7 +40,7 @@ document.addEventListener('deviceready', function () {
     // Setup PouchDB only on device ready
     PouchDB.plugin(PouchAdapterCordovaSqlite);
     
-    // Local database
+    // Local database could use SQlite 
     if (ons.platform.isIOS() || ons.platform.isAndroid())
         myApp.db = new PouchDB('tasks.db', {adapter: 'cordova-sqlite'});
     else myApp.db = new PouchDB('tasks.db');  
