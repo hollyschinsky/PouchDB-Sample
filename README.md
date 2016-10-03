@@ -12,15 +12,20 @@ application is back online, keeping the user's data in sync for the next time th
 From the root of your PhoneGap/Cordova project...
 
 1. Download a version >= 6.0.0 of `pouchdb.js` from [here](https://github.com/pouchdb/pouchdb/releases) and include it in your `index.html`.
-** Be sure to include it **after** you `cordova.js` include to ensure you get the `deviceready` event.**
+*Be sure to include it **after** `cordova.js` to ensure you get the `deviceready` event.*
 
     <script src="/path/to/pouchdb.js"></script>
 
-2. Install the [pouchdb-adapter-cordova-sqlite](https://github.com/nolanlawson/pouchdb-adapter-cordova-sqlite) adapter
+2. Download the [pouchdb-adapter-cordova-sqlite](https://github.com/nolanlawson/pouchdb-adapter-cordova-sqlite) adapter bundle
+from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordova-sqlite.js) and include it in your project under
+`www/lib/pouchdb`
+
+    Alternatively - use npm to install it... 
 
     `$ npm install pouchdb-adapter-cordova-sqlite`
 
-    >PouchDB adapter using either [Cordova-sqlite-storage](https://github.com/litehelpers/Cordova-sqlite-storage), 
+
+    >This is a PouchDB adapter using either [Cordova-sqlite-storage](https://github.com/litehelpers/Cordova-sqlite-storage), 
     [cordova-plugin-sqlite-2](https://github.com/nolanlawson/cordova-plugin-sqlite-2) or [cordova-plugin-websql](https://www.npmjs.com/package/cordova-plugin-websql) 
     as its data store, depending on the device it's running from.
 
@@ -29,9 +34,9 @@ From the root of your PhoneGap/Cordova project...
 
 3. Reference the new adapter in the `index.html`
 
-    `<script src="lib/pouchdb/pouchdb.cordova-sqlite.min.js"></script>`
+    `<script src="lib/pouchdb/pouchdb.cordova-sqlite.js"></script>`
 
-2. Create a new local and remote database when the `deviceready` event is fired
+2. Create a new local database when the `deviceready` event is fired
 
         document.addEventListener('deviceready', function () {
             // Setup PouchDB only on device ready
@@ -44,7 +49,7 @@ From the root of your PhoneGap/Cordova project...
         };
 
 ## PouchDB Server
-pouchdb-server is a simple Node.js server that presents a simple REST API, which mimics that of CouchDB, on top of PouchDB
+[pouchdb-server](https://github.com/pouchdb/pouchdb-server) is a simple Node.js server that presents a simple REST API, which mimics that of CouchDB, on top of PouchDB
 
     $ npm install -g pouchdb-server
     $ pouchdb-server -p 15984
@@ -55,7 +60,7 @@ pouchdb-server is a simple Node.js server that presents a simple REST API, which
     [info] navigate to http://127.0.0.1:15984/_utils for the Fauxton UI.
     [info] GET / 200 - 127.0.0.1```
 
-3. Set up a remote database 
+3. Set up a remote database in the `deviceready` event handler
 
         // Create the remote database to sync to 
         myApp.remoteDB = new PouchDB("http://localhost:15984/tasks");
