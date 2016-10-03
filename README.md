@@ -12,7 +12,7 @@ application is back online, keeping the user's data in sync for the next time th
 From the root of your PhoneGap/Cordova project...
 
 1. Download a version >= 6.0.0 of `pouchdb.js` from [here](https://github.com/pouchdb/pouchdb/releases) and include it in your `index.html`.
-*Be sure to include it **after** `cordova.js` to ensure you get the `deviceready` event.*
+*Be sure to include it after `cordova.js` to ensure you get the `deviceready` event.*
 
     <script src="/path/to/pouchdb.js"></script>
 
