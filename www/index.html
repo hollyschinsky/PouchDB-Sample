@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">-->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <meta charset="UTF-8">
+        <title>To Do List</title>
+        
+        <link rel="stylesheet" href="lib/onsenui/css/onsenui.css"/>
+        <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components-purple-theme.css"/>
+        <link rel="stylesheet" href="css/style.css">        
+        
+    </head>
+    <body>
+        <!-- First navigation component: Navigator. This will remain always on top of the app. -->
+        <ons-navigator id="myNavigator" page="splitter.html">
+        </ons-navigator>
+
+
+        <!-- Second navigation component: Splitter. This will disappear if the first component changes its content. -->
+        <ons-template id="splitter.html">
+            <ons-splitter id="mySplitter">
+            <ons-splitter-side page="views/menu.html" swipeable width="250px" collapse swipe-target-width="50px">
+            </ons-splitter-side>
+            <ons-splitter-content page="tabbar.html">
+            </ons-splitter-content>
+            </ons-splitter>
+        </ons-template>
+
+        <!-- Third navigation component: Tabbar. This will disappear if the first or second components change their content. -->
+        <ons-template id="tabbar.html">
+            <ons-page id="tabbarPage">
+                <ons-toolbar>
+                <div class="left">
+                    <!-- Toolbar-button with different icons depending on the platform. -->
+                    <ons-toolbar-button component="button/menu">
+                    <ons-icon icon="ion-navicon, material:md-menu" size="32px, material:24px"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">To-Do List</div>
+                <div class="right">
+                    <!-- Toolbar-button  only visible for iOS/other. -->
+                    <ons-if platform="ios other">
+                    <ons-toolbar-button component="button/new-task">New</ons-toolbar-button>
+                    </ons-if>
+                </div>
+                </ons-toolbar>
+
+                <!-- Floating Action Button only visible for Android. -->
+                <ons-if platform="android">
+                <ons-fab position="right bottom" component="button/new-task">
+                    <ons-icon icon="md-edit"></ons-icon>
+                </ons-fab>
+                </ons-if>
+
+                <!-- Auto-positioned Tabbar: top on Android, bottom on iOS/other. -->
+                <ons-tabbar id="myTabbar" position="auto">
+                <ons-tab page="views/pending_tasks.html" label="Pending" active>
+                </ons-tab>
+                <ons-tab page="views/completed_tasks.html" label="Completed">
+                </ons-tab>
+                </ons-tabbar>
+            </ons-page>
+        </ons-template>
+
+        <script src="lib/onsenui/js/onsenui.js"></script>
+        <script src="lib/pouchdb/pouchdb.min.js"></script>
+        <script src="lib/pouchdb/pouchdb.cordova-sqlite.min.js"></script>        
+        <script src="js/app.js"></script>
+        <script src="js/services.js"></script>
+        <script src="js/controllers.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>  
+        <script>
+        
+        </script>      
+    </body>
+</html>
