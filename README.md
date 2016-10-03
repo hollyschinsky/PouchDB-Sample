@@ -10,31 +10,31 @@ application is back online, keeping the user's data in sync for the next time th
 ## Quick Start
 1. Clone or download this repo 
 2. Create a new PhoneGap or Cordova Project using the PhoneGap CLI or the PhoneGap Desktop App
-        `$ phonegap create PouchDBApp` 
+         
+	 $ phonegap create PouchDBApp 
 
 3. Copy in the `config.xml` file and `www` folder into the project created above
 4. Serve the app from PhoneGap Desktop or the PhoneGap CLI from the root of your project
 
-        `$ phonegap serve`
+         $ phonegap serve 
  
 
 ## Getting Set Up with PouchDB - General
 1. Create a PhoneGap project using the PhoneGap Desktop app or the PhoneGap CLI
 
-        `$ phonegap create MyPouchDBApp`
+        $ phonegap create MyPouchDBApp
        
 2. Open the new project from the root in your favorite editor
 
-3. Download a version >= 6.0.0 of `pouchdb.js` from [here](https://github.com/pouchdb/pouchdb/releases) and include it in your `index.html`.
-*Be sure to include it **after** `cordova.js` to ensure you get the `deviceready` event.*
-=======
-    <script src="/path/to/pouchdb.js"></script>
+3. Download a version >= 6.0.0 of `pouchdb.js` from [here](https://github.com/pouchdb/pouchdb/releases) and include it in your `index.html`. *Be sure to include it **after** `cordova.js` to ensure you get the `deviceready` event.*
+
+    	<script src="/path/to/pouchdb.js"></script>
 
 4. Download the [pouchdb-adapter-cordova-sqlite](https://github.com/nolanlawson/pouchdb-adapter-cordova-sqlite) adapter bundle
 from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordova-sqlite.js) and include it in your project under
 `www/lib/pouchdb`
 
-    Alternatively - use npm to install it... 
+   Alternatively - use npm to install it... 
 
     `$ npm install pouchdb-adapter-cordova-sqlite`
 
@@ -48,7 +48,7 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
 
 5. Reference the new adapter in the `index.html`
 
-    `<script src="lib/pouchdb/pouchdb.cordova-sqlite.js"></script>`
+     `<script src="lib/pouchdb/pouchdb.cordova-sqlite.js"></script>`
 
 6. Create a new local database when the `deviceready` event is fired
 
@@ -70,10 +70,10 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
         $ pouchdb-server -p 15984
         
         **Output**
-        ```hschinsk-osx:OfflineFirst hschinsk$ pouchdb-server -p 15984
+        hschinsk-osx:OfflineFirst hschinsk$ pouchdb-server -p 15984
         [info] pouchdb-server has started on http://127.0.0.1:15984/
         [info] navigate to http://127.0.0.1:15984/_utils for the Fauxton UI.
-        [info] GET / 200 - 127.0.0.1```
+        [info] GET / 200 - 127.0.0.1
 
 
         // Create the remote database to sync to 
@@ -97,7 +97,7 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
 9. Add API calls (see the www/js/services.js file for example calls)
 10. Serve the app from PhoneGap Desktop or the PhoneGap CLI from the root of your project
 
-        `$ phonegap serve`
+         $ phonegap serve
 
 11. Open your browser to the IP address returned from serve and start testing
 12. Alternatively, add a mobile platform and test on your device or simulator
