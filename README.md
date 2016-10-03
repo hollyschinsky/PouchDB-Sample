@@ -69,11 +69,11 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
         $ npm install -g pouchdb-server
         $ pouchdb-server -p 15984
         
-     **Output**
-        ```hschinsk-osx:OfflineFirst hschinsk$ pouchdb-server -p 15984
-        [info] pouchdb-server has started on http://127.0.0.1:15984/
-        [info] navigate to http://127.0.0.1:15984/_utils for the Fauxton UI.
-        [info] GET / 200 - 127.0.0.1```
+**Output**
+```hschinsk-osx:OfflineFirst hschinsk$ pouchdb-server -p 15984
+[info] pouchdb-server has started on http://127.0.0.1:15984/
+[info] navigate to http://127.0.0.1:15984/_utils for the Fauxton UI.
+[info] GET / 200 - 127.0.0.1```
 
 
         // Create the remote database to sync to 
