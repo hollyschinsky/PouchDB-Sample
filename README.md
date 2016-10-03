@@ -11,7 +11,7 @@ application is back online, keeping the user's data in sync for the next time th
 1. Clone or download this repo 
 2. Create a new PhoneGap or Cordova Project using the PhoneGap CLI or the PhoneGap Desktop App
          
-	 $ phonegap create PouchDBApp 
+	 `$ phonegap create PouchDBApp`
 
 3. Copy in the `config.xml` file and `www` folder into the project created above
 4. Serve the app from PhoneGap Desktop or the PhoneGap CLI from the root of your project
@@ -69,11 +69,11 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
         $ npm install -g pouchdb-server
         $ pouchdb-server -p 15984
         
-        **Output**
-        hschinsk-osx:OfflineFirst hschinsk$ pouchdb-server -p 15984
+     **Output**
+        ```hschinsk-osx:OfflineFirst hschinsk$ pouchdb-server -p 15984
         [info] pouchdb-server has started on http://127.0.0.1:15984/
         [info] navigate to http://127.0.0.1:15984/_utils for the Fauxton UI.
-        [info] GET / 200 - 127.0.0.1
+        [info] GET / 200 - 127.0.0.1```
 
 
         // Create the remote database to sync to 
