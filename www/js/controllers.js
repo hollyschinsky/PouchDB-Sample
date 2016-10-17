@@ -39,7 +39,7 @@ myApp.controllers = {
 
             if (newTitle) {
               // If input title is not empty, create a new task.
-              myApp.services.tasks.create(
+              myApp.services.tasks.addNewTask(
                 {
                   title: newTitle,
                   category: page.querySelector('#category-input').value,
@@ -91,14 +91,16 @@ myApp.controllers = {
           ).then(function(buttonIndex) {
             if (buttonIndex === 1) {
               // If 'Save' button was pressed, overwrite the task.
-              myApp.services.tasks.update(element,
+              myApp.services.pouch.update(element,
                 {
+                  _id: element.data._id,
+                  _rev: element.data._rev,
                   title: newTitle,
                   category: page.querySelector('#category-input').value,
                   description: page.querySelector('#description-input').value,
                   ugent: element.data.urgent,
                   highlight: page.querySelector('#highlight-input').checked
-                }
+                }, false
               );
 
               // Set selected category to 'All', refresh and pop page.

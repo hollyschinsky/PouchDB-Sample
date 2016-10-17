@@ -34,39 +34,87 @@ document.addEventListener('show', function(event) {
 });
 
 // Device Ready Event Handler
+// Setup PouchDB only on device ready    
 document.addEventListener('deviceready', function () {
-    console.log("device ready event fired");        
-    
-    // Setup PouchDB only on device ready
-    PouchDB.plugin(PouchAdapterCordovaSqlite);
-    
-    // Local database could use SQlite 
-    if (ons.platform.isIOS() || ons.platform.isAndroid())
-        myApp.db = new PouchDB('tasks.db', {adapter: 'cordova-sqlite'});
-    else myApp.db = new PouchDB('tasks.db');  
-    
-    // Create the remote database to sync to 
-    myApp.remoteDB = new PouchDB("http://localhost:15984/tasks");
-
-    // Log the info for each
-    myApp.db.info().then(function (info) {
-        console.log("Local DB " + JSON.stringify(info));
-    })
-    myApp.remoteDB.info().then(function (info) {
-        console.log("Remote DB " + JSON.stringify(info));
-    })
-
-    // Fetch the existing rows
-    myApp.services.pouch.fetchAllRemote(function(rows) {
-        for (var i=0; i<rows.length; i++) {
-            var taskItem = myApp.services.tasks.create(rows[i].doc);
-            if (rows[i].doc.completed) {
-                document.querySelector('#completed-list').appendChild(taskItem);
-            }
-        }
-    })
-    
-    // Turn on live syncing
-    myApp.services.pouch.sync();
-    
+    console.log("Device ready event fired ");
+    myApp.isOnline = navigator.onLine; // browser support for checking connection - may not be present everywhere
+    myApp.initConnectionAndDB();
 });
+
+
+// 1) Check for the connection to detect offline situations and add event handlers for when it goes
+// on/offline based on platform
+// 2) Create the database depending on platform. If mobile we may want to use SQLite adapter. This could
+// fail when running in mobile device emulation mode since SQLite plugin thinks it's on a device due to
+// user agent (ons platform value too)
+myApp.initConnectionAndDB = function() { 
+ 
+    if (ons.platform.isIOS() || ons.platform.isAndroid()) {
+        // Running on mobile device or in mobile simulator mode...
+        
+        // Use network information plugin to detect current connection status
+        if (navigator.connection && navigator.connection.type == Connection.NONE) {
+            console.log("Plugin found but connection shows that you're not online")
+            myApp.isOnline = false;
+        }  
+        else myApp.isOnline = true;   
+
+        // Network information plugin events to detect offline when running on mobile
+        document.addEventListener('online', function() {
+            console.log("MOBILE Online detected")
+            myApp.isOnline = true;
+        })
+        document.addEventListener('offline', function() {
+            console.log("MOBILE Offline detected")
+            myApp.isOnline = false;
+        })
+        PouchDB.plugin(PouchAdapterCordovaSqlite);
+        
+        // Create local database with SQLite adapter
+        myApp.db = new PouchDB('tasks.db', {adapter: 'cordova-sqlite'});
+                        
+    }
+    // Running in the browser (non-mobile emulation etc)
+    else {
+        window.addEventListener('online', function() {
+            console.log("Online detected")
+            myApp.isOnline = true;
+        })
+        window.addEventListener('offline', function() {
+            console.log("Offline detected")
+            myApp.isOnline = false;
+        })
+        // Create local database based on default in browser
+        myApp.db = new PouchDB('tasks.db');
+    }  
+    
+    // Create or open the remote database to sync to - requires you to start up the PouchDB server 1st (see readme) 
+    myApp.remoteDB = new PouchDB("http://localhost:15984/tasks");
+    
+    // Make a call to get the info on the db. We should add error handling in case it didn't get created properly since this
+    // is the 1st time it will try to use it. If you omit this error handling and are running in mobile emulation mode in your 
+    // desktop browser it will fail since the user agent is returning mobile. 
+    myApp.db.info().then(function (info) {
+        console.log("Local DB info " + JSON.stringify(info));          
+    }).catch(function (err) {
+        console.log("Error using local database - this may happen if you specified an adapter like SQLite only available on native mobile device but are actually running in the browser in chrome mobile simulator mode (user agent returns mobile)." + err);        
+    })
+    
+    myApp.remoteDB.info().then(function (info) {
+        console.log("Remote DB info " + JSON.stringify(info));          
+    })
+
+    // Fetch the existing rows from the remote db if any exist and add them to the appropriate list
+    if (myApp.isOnline) {
+        console.log("You're online, init with remote database");
+        myApp.services.pouch.initWithRemote();
+    }
+    else {
+        console.log("You're offline, init with local database");
+        myApp.services.pouch.initWithLocal();
+    }
+    
+    // Turn on live 2-way syncing
+    myApp.services.pouch.sync();
+
+}

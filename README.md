@@ -16,8 +16,7 @@ application is back online, keeping the user's data in sync for the next time th
 3. Copy in the `config.xml` file and `www` folder into the project created above
 4. Serve the app from PhoneGap Desktop or the PhoneGap CLI from the root of your project
 
-         $ phonegap serve 
- 
+         $ phonegap serve  
 
 ## Getting Set Up with PouchDB - General
 1. Create a PhoneGap project using the PhoneGap Desktop app or the PhoneGap CLI
