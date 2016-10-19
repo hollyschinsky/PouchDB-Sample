@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.devgirl.offline.first" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>To Do List</name>
+<widget id="org.devgirl.pwa" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>pwa-demo</name>
     <description>
         Sample to do list app showing the use of PouchDB to store and sync data with a remote server.
     </description>

@@ -40,7 +40,8 @@ document.addEventListener('deviceready', function () {
         })
 
         PouchDB.plugin(PouchAdapterCordovaSqlite);        
-        myApp.db = new PouchDB(dbName, {adapter: 'cordova-sqlite'});                        
+        //myApp.db = new PouchDB(dbName, {adapter: 'cordova-sqlite'});
+        myApp.db = new PouchDB(dbName);                        
     }
     // Running in the browser (non-mobile emulation etc)
     else {
