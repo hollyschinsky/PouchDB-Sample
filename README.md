@@ -1,4 +1,4 @@
-## PhoneGap PouchDB Sample Project 
+# PhoneGap PouchDB Sample  
 
 ## Introduction
 >PouchDB is an open-source JavaScript database inspired by Apache CouchDB that is designed to run well within the browser.
@@ -7,15 +7,12 @@
 It enables applications to store data locally while offline and then synchronize it with CouchDB compatible servers when the 
 app is back online, allowing for a nice offline experience. [Related Slides](http://www.slideshare.net/HollySchinsky)
 
->This project is a sample Todo app using vanillaJS/Onsen UI with Cordova and PouchDB to show how to easily store and sync data with a remote
-server. 
-
-(Credit: Onsen UI Todo sample code)[https://github.com/frankdiox/OnsenUI-Todo-App}]   
+This project is a sample Todo app using vanillaJS/Onsen UI with Cordova and PouchDB to show how to easily store and sync data with a remote
+server. [Credit: Onsen UI Todo sample code](https://github.com/frankdiox/OnsenUI-Todo-App)   
 
 ![screenshots/mockup/ss.png](screenshots/mockup/ss.png)
 
-Quick Start Setup
-==================
+## Quick Start Setup
 1. Clone or download this repo 
 2. Create a new PhoneGap or Cordova Project using the PhoneGap CLI or the PhoneGap Desktop App
          
@@ -31,9 +28,8 @@ Quick Start Setup
     - cordova-plugin-network-information 
     - cordova-plugin-statusbar
 
-General Setup
-==================
-*Use this setup to add PouchDB support and data sync to your existing apps...** 
+## General Setup
+*Use this setup to add PouchDB support and data sync to your existing apps...*
 
 1. Create a PhoneGap project using the PhoneGap Desktop app or the PhoneGap CLI
 
@@ -49,7 +45,7 @@ General Setup
 from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordova-sqlite.js) and include it in your project under
 `www/lib/pouchdb`
 
-   Alternatively - use npm to install it... 
+   Alternatively, use npm to install it... 
 
     `$ npm install pouchdb-adapter-cordova-sqlite`
 
