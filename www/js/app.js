@@ -40,7 +40,10 @@ document.addEventListener('deviceready', function () {
         })
 
         PouchDB.plugin(PouchAdapterCordovaSqlite);        
-        //myApp.db = new PouchDB(dbName, {adapter: 'cordova-sqlite'});
+        // Uncomment the following to use the adapter only when you're running on an actual device or 
+        // in phonegap browser platform mode. It will not work in Chrome emulation mode specifically since
+        // SQLite is not accessible (only on native device).  
+        // myApp.db = new PouchDB(dbName, {adapter: 'cordova-sqlite'});
         myApp.db = new PouchDB(dbName);                        
     }
     // Running in the browser (non-mobile emulation etc)
