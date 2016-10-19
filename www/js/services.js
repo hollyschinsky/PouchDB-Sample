@@ -35,7 +35,7 @@ myApp.services = {
     tasks: {
 		// Adds a new task to the db, create the UI element and add to pending list 
 		addNewTask: function (data) {
-			console.log("Creating a new task " + data);
+			console.log("Creating a new task " + data);			
 			myApp.services.pouch.create(data);						
 		},		
 		// Creates a new task item element. This may be called when a new task is added or when the app opens and the existing 
@@ -61,7 +61,6 @@ myApp.services = {
 					'</div>' +
 				'</ons-list-item>'
 				;
-
 			
 			// Takes the actual task item.
 			var taskItem = template.firstChild;
@@ -73,7 +72,7 @@ myApp.services = {
 				if (event.target.checked==true)
 					taskItem.data.completed=true;
 				else taskItem.data.completed=false;
-				myApp.services.pouch.update(taskItem,taskItem.data,true);
+				myApp.services.pouch.update(taskItem,taskItem.data);
 			};
 
 			taskItem.addEventListener('change', taskItem.data.onCheckboxChange);
@@ -118,7 +117,7 @@ myApp.services = {
 		},
 
 		// Modifies the inner data and current view of an existing task.
-		update: function (taskItem, data,needsAnimate) {
+		update: function (taskItem, data) {
 			if (data.title !== taskItem.data.title) {
 				// Update title view.
 				taskItem.querySelector('.center').innerHTML = data.title;
@@ -141,21 +140,19 @@ myApp.services = {
 			
 			// If this was an update from another client interacting with the list to the remoteDB it will need to be 
 			// programmatically checked off and moved to the completed list
-			if (needsAnimate) {
+			if (taskItem.parentElement.id === 'pending-list' && data.completed) {
 				myApp.services.animators.swipe(taskItem, function () { 		
-					if (taskItem.parentElement.id === 'pending-list' && data.completed) {
-						document.querySelector("#pending-list").removeChild(taskItem);
-						// mark it checked
-						taskItem.getElementsByClassName("checkbox")[0].setAttribute("checked",true);
-						document.querySelector("#completed-list").appendChild(taskItem);					
-					}	
-					else if (taskItem.parentElement.id === 'completed-list' && !data.completed) {					
-						document.querySelector("#completed-list").removeChild(taskItem);
-						// mark it UN-checked
-						//taskItem.getElementsByClassName("checkbox")[0].setAttribute("checked",false);
-						document.querySelector("#pending-list").appendChild(taskItem);
-											
-					}
+					document.querySelector("#pending-list").removeChild(taskItem);
+					taskItem.getElementsByClassName("checkbox")[0].checked=true;
+					document.querySelector("#completed-list").appendChild(taskItem);					
+				})
+			}
+			else if (taskItem.parentElement.id === 'completed-list' && !data.completed) {
+				myApp.services.animators.swipe(taskItem, function () {
+					document.querySelector("#completed-list").removeChild(taskItem);
+					if (taskItem.getElementsByClassName("checkbox")[0].checked)
+						taskItem.getElementsByClassName("checkbox")[0].checked=false;
+					document.querySelector("#pending-list").appendChild(taskItem);
 				})
 			}			
 		},
@@ -265,93 +262,61 @@ myApp.services = {
 		}		 
 	},
 
-	////////////////////////////////
-	// General Database Service
-	////////////////////////////////
+	// Database Services using pouchDB 
 	pouch: {					
 		create: function(item) {
-			myApp.db.post(
-				item
-			).then(function (res) {
-				console.log("Response id " +res.id + " item " + item);				
-				return myApp.db.get(res.id);				
-			}).then(function (doc) {								
-				console.log('Created new task in db complete ' + JSON.stringify(doc));
-				var taskItem = myApp.services.tasks.createTaskElem(doc);			
-				myApp.services.tasks.addToPendingList(taskItem);				
+			myApp.db.post(item).then(function (response) {
+				console.log("Response id " + response.id + " item " + item);						
 			}).catch(function (err) {
-				// some error (maybe a 409, because it already exists?)
-				if (err.name === 'conflict') {
-					console.log("A conflict occurred upon create - item may already exist?" + err);
-				} else {
-					console.log("Error " + err);
-				}
+				console.log(err.name==='conflict'?"Conflict occurred - possible duplicate ":"Error " + err);				
 			});
 		},
 		delete: function(taskItem) {
-			myApp.db.get(taskItem.data._id).then(function(doc) {
-				console.log("Going to delete doc with id " + doc._id)
-				return myApp.db.remove(doc);
-			}).then(function (result) {
-				console.log("Remove call result " + JSON.stringify(result));
-				// Now remove the task elem in the UI
-				myApp.services.tasks.removeTaskElem(taskItem);
+			myApp.db.remove(taskItem.data).then(function(response) {
+				console.log("Remove item response " + JSON.stringify(response));
 			}).catch(function (err) {
-				console.log("Remove call error " + err);
+				console.log("Remove error " + err);
 			});
 		},		
-		update: function(taskItem,updatedDoc,needsAnimate) {
+		update: function(taskItem,updatedDoc) {			
 			myApp.db.get(updatedDoc._id).then(function (origDoc) {
 				updatedDoc.onCheckboxChange="";
-				updatedDoc._rev = origDoc._rev;
-				updatedDoc._id = origDoc._id;
-				console.log("Calling put for locally updated doc with title " + updatedDoc.title);
-				return myApp.db.put(updatedDoc).then(function (response) {			
-					console.log("Update with a put call - response " + JSON.stringify(response));
-					myApp.db.get(response.id).then(function (doc) {
-						console.log("Update-put-get call returned " + JSON.stringify(doc));	
-						myApp.services.tasks.update(taskItem,doc,needsAnimate);
-					})
-				})																		
-			}).catch(function (err) {
-				// some error (maybe a 409, because it already exists?)
-				if (err.name === 'conflict') {
-					console.log("A conflict occurred upon update");
-				} else {
-					console.log(err);
-				}
-			}); 			
-		},		
-		initWithRemote: function(callback) {
-			myApp.remoteDB.allDocs({
-				include_docs: true,
-				attachments: true
-			}, function(err, response) {
-				if (err) { console.log(err); }
-				var rows = response.rows;
-				for (var i=0; i<rows.length; i++) {
+				console.log("Updated doc rev "+ updatedDoc._rev); 
+				console.log("Original doc rev "+ origDoc._rev)
+				myApp.db.put(updatedDoc).catch(function (err) { 
+					console.log(err);				
+				})				
+			}) 			
+		},				
+		loadData: function(callback) {
+			myApp.db.allDocs({ include_docs: true, attachments: true}, function(err, response) {
+				if (err) console.log(err); 
+				var rows = response.rows;				
+				for (var i=0; i<rows.length; i++) {					
 					var taskItem = myApp.services.tasks.createTaskElem(rows[i].doc);
-					if (rows[i].doc.completed) {
+					if (rows[i].doc.completed) 
 						myApp.services.tasks.addToCompletedList(taskItem);
-					}
 					else myApp.services.tasks.addToPendingList(taskItem);
 				}								
 			});
-		},
-		initWithLocal: function(callback) {
-			myApp.db.allDocs({
-				include_docs: true,
-				attachments: true
-			}, function(err, response) {
-				if (err) { console.log(err); }
-				var rows = response.rows;
-				for (var i=0; i<rows.length; i++) {
-					var taskItem = myApp.services.tasks.createTaskElem(rows[i].doc);
-					if (rows[i].doc.completed) {
+		},		
+		handleChanges: function() {
+			myApp.db.changes({ since: 'now', live: true, include_docs: true}).on('change', function(change) {
+				console.log("Processing db change " + JSON.stringify(change));	
+				var taskItem = document.getElementById(change.id);
+				if (taskItem!=null) {
+					if (change.deleted)
+						myApp.services.tasks.removeTaskElem(taskItem);
+					else myApp.services.tasks.update(taskItem,change.doc);
+				}
+				else {
+					var taskItem = myApp.services.tasks.createTaskElem(change.doc);
+					if (change.doc.completed) 
 						myApp.services.tasks.addToCompletedList(taskItem);
-					}
-					else myApp.services.tasks.addToPendingList(taskItem);
-				}								
+					else myApp.services.tasks.addToPendingList(taskItem);					
+				} 		
+			}).on('error', function (err) {
+				console.log(err);
 			});
 		},
 		sync: function() {
@@ -359,29 +324,9 @@ myApp.services = {
 				live: true,
 				retry: true
 			}).on('change', function (result) {
-				console.log("A db change occurred " + JSON.stringify(result)+"\n\n");
-				var taskItemID = result.change.docs[0]._id;
-				console.log("Synced DOC ID " + taskItemID);				
-				var taskItem = document.getElementById(taskItemID);
-				console.log("List Item value " + taskItem);
-				console.log("Deleted flag " + result.change.docs[0]._deleted);
-				if (taskItem!=null) {
-					if (result.change.docs[0]._deleted) {
-						// Remove the task elem in the UI
-						myApp.services.tasks.removeTaskElem(taskItem);
-					}
-					else {
-						console.log("Updating existing task item")
-						myApp.services.tasks.update(taskItem,result.change.docs[0]);			
-					}				
-				}
-				else {
-					console.log("Add new task to this local db list")
-					var taskItem = myApp.services.tasks.createTaskElem(result.change.docs[0]);
-					myApp.services.tasks.addToPendingList(taskItem); 				
-				}														
+				console.log("A db change occurred " + JSON.stringify(result));																	
 			}).on('paused', function () {
-				console.log("Replication paused.");				
+				console.log("Replication paused ");				
 			}).on('active', function (info) {
 				console.log("Replication resumed " + JSON.stringify(info));				
 			}).on('error', function (err) {
@@ -398,33 +343,12 @@ myApp.services = {
 		},							
 		deleteDB: function(db) {
 			myApp.db.destroy().then(function (response) {
-				console.log("DB " + myApp.db + " deleted ");
+				console.log("Database deleted " + response);
 			}).catch(function (err) {
-				console.log("ERROR on delete db " + myApp.db + " " + err);
+				console.log("Error on database delete " + err);
 			}
-		)}
-					
-	},
-	// Initial Data 
-	fixtures: [
-		{
-			_id: "00000001",
-			title: 'Vacation Booked',
-			category: 'Travel',
-			description: 'Book trip to Colorado.',
-			highlight: false,
-			urgent: true
-		},		
-		{
-			_id: "00000002",
-			title: 'Dentist Appt',
-			category: 'Personal',
-			description: 'Schedule routine appt.',
-			highlight: false,
-			urgent: false
-		},		
-	],
-	
+		)}					
+	}	
 };
 
 

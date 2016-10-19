@@ -1,13 +1,21 @@
-# Easy Data for PhoneGap Apps with PouchDB
+## PhoneGap PouchDB Sample Project 
 
 ## Introduction
 >PouchDB is an open-source JavaScript database inspired by Apache CouchDB that is designed to run well within the browser.
 
 >PouchDB was created to help web developers build applications that work as well offline as they do online.
-It enables applications to store data locally while offline, then synchronize it with CouchDB and compatible servers when the 
-application is back online, keeping the user's data in sync for the next time the login. 
+It enables applications to store data locally while offline and then synchronize it with CouchDB compatible servers when the 
+app is back online, allowing for a nice offline experience. [Related Slides](http://www.slideshare.net/HollySchinsky)
 
-## Quick Start
+>This project is a sample Todo app using vanillaJS/Onsen UI with Cordova and PouchDB to show how to easily store and sync data with a remote
+server. 
+
+(Credit: Onsen UI Todo sample code)[https://github.com/frankdiox/OnsenUI-Todo-App}]   
+
+![screenshots/mockup/ss.png](screenshots/mockup/ss.png)
+
+Quick Start Setup
+==================
 1. Clone or download this repo 
 2. Create a new PhoneGap or Cordova Project using the PhoneGap CLI or the PhoneGap Desktop App
          
@@ -18,14 +26,22 @@ application is back online, keeping the user's data in sync for the next time th
 
          $ phonegap serve  
 
-## Getting Set Up with PouchDB - General
+**Note:** This project uses the following plugins: 
+    - cordova-plugin-sqlite-2
+    - cordova-plugin-network-information 
+    - cordova-plugin-statusbar
+
+General Setup
+==================
+*Use this setup to add PouchDB support and data sync to your existing apps...** 
+
 1. Create a PhoneGap project using the PhoneGap Desktop app or the PhoneGap CLI
 
         $ phonegap create MyPouchDBApp
        
 2. Open the new project from the root in your favorite editor
 
-3. Download a version >= 6.0.0 of `pouchdb.js` from [here](https://github.com/pouchdb/pouchdb/releases) and include it in your `index.html`. *Be sure to include it **after** `cordova.js` to ensure you get the `deviceready` event.*
+3. Download a version of `pouchdb.js` >= 6.0.0 from [here](https://github.com/pouchdb/pouchdb/releases) and include it in your `index.html`. *Be sure to include it **after** `cordova.js` to ensure you get the `deviceready` event.*
 
     	<script src="/path/to/pouchdb.js"></script>
 
@@ -37,7 +53,6 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
 
     `$ npm install pouchdb-adapter-cordova-sqlite`
 
-
     >This is a PouchDB adapter using either [Cordova-sqlite-storage](https://github.com/litehelpers/Cordova-sqlite-storage), 
     [cordova-plugin-sqlite-2](https://github.com/nolanlawson/cordova-plugin-sqlite-2) or [cordova-plugin-websql](https://www.npmjs.com/package/cordova-plugin-websql) 
     as its data store, depending on the device it's running from.
@@ -45,17 +60,23 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
     >As long as there is a global `cordova.sqlitePlugin` (or `openDatabase`) available, this adapter should work. The 
     name of the adapter for database init is *`cordova-sqlite`*.        
 
-5. Reference the new adapter in the `index.html`
+5. Reference the PouchDB SQlite adapter in the `index.html`
 
      `<script src="lib/pouchdb/pouchdb.cordova-sqlite.js"></script>`
 
-6. Create a new local database when the `deviceready` event is fired
+4. Add at least one of the SQlite plugins to your project to support the above:
+  - [cordova-plugin-sqlite-2](https://github.com/nolanlawson/cordova-plugin-sqlite-2)    
+  - [Cordova-sqlite-storage](https://github.com/litehelpers/Cordova-sqlite-storage)
+  - [cordova-plugin-websql](https://www.npmjs.com/package/cordova-plugin-websql)
+    
+
+6. Create a new local database after the `deviceready` event is fired
 
         document.addEventListener('deviceready', function () {
             // Setup PouchDB only on device ready
             PouchDB.plugin(PouchAdapterCordovaSqlite);
     
-            // If mobile platform, we may want to use SQlite 
+            // If mobile platform, you may want to use SQlite 
             if (ons.platform.isIOS() || ons.platform.isAndroid())
                 myApp.db = new PouchDB('tasks.db', {adapter: 'cordova-sqlite'});
             else myApp.db = new PouchDB('tasks.db');                          
@@ -66,19 +87,19 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
     [pouchdb-server](https://github.com/pouchdb/pouchdb-server) is a simple Node.js server that presents a simple REST API, which mimics that of CouchDB, on top of PouchDB
 
         $ npm install -g pouchdb-server
-        $ pouchdb-server -p 15984
+        $ pouchdb-server -p 5984
         
  **Output**
- hschinsk-osx:OfflineFirst hschinsk$ pouchdb-server -p 15984
- [info] pouchdb-server has started on http://127.0.0.1:15984/
- [info] navigate to http://127.0.0.1:15984/_utils for the Fauxton UI.
+ hschinsk-osx:OfflineFirst hschinsk$ pouchdb-server -p 5984
+ [info] pouchdb-server has started on http://127.0.0.1:5984/
+ [info] navigate to http://127.0.0.1:5984/_utils for the Fauxton UI.
  [info] GET / 200 - 127.0.0.1
 
 
         // Create the remote database to sync to 
-        myApp.remoteDB = new PouchDB("http://localhost:15984/tasks");
+        myApp.remoteDB = new PouchDB("http://localhost:5984/tasks");
 
-8. Start syncing        
+8. Start bidirectional replication by calling sync        
             
             myApp.db.sync(myApp.remoteDB, {
 				live: true,
@@ -106,4 +127,7 @@ from [here](https://unpkg.com/pouchdb-adapter-cordova-sqlite/dist/pouchdb.cordov
 - [PouchDB Inspector](https://chrome.google.com/webstore/detail/pouchdb-inspector/hbhhpaojmpfimakffndmpmpndcmonkfa)
 - [PouchDB + PhoneGap](https://github.com/pouchdb/pouchdb/wiki/PouchDB-on-Phonegap)
 - [PouchDB PhoneGap Cordova Notes](https://github.com/nolanlawson/pouchdb-phonegap-cordova)
-
+- [pouchdb-server](https://github.com/pouchdb/pouchdb-server) 
+- [CouchDB](http://couchdb.apache.org/)
+- [Couchbase](http://www.couchbase.com/)
+- [Cloudant](http://cloudant.com)

@@ -33,7 +33,7 @@ ons-splitter-side[side="left"] {
  ********************/
 
 #tabbarPage .list {
-  background-color: grey;
+  /*background-color: grey;*/
   overflow-x: hidden;
 }
 

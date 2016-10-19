@@ -45,7 +45,8 @@ myApp.controllers = {
                   category: page.querySelector('#category-input').value,
                   description: page.querySelector('#description-input').value,
                   highlight: page.querySelector('#highlight-input').checked,
-                  urgent: page.querySelector('#urgent-input').checked
+                  urgent: page.querySelector('#urgent-input').checked,
+                  completed: false
                 }
               );
               
@@ -92,15 +93,16 @@ myApp.controllers = {
             if (buttonIndex === 1) {
               // If 'Save' button was pressed, overwrite the task.
               myApp.services.pouch.update(element,
-                {
+              {
                   _id: element.data._id,
                   _rev: element.data._rev,
                   title: newTitle,
                   category: page.querySelector('#category-input').value,
                   description: page.querySelector('#description-input').value,
                   ugent: element.data.urgent,
-                  highlight: page.querySelector('#highlight-input').checked
-                }, false
+                  highlight: page.querySelector('#highlight-input').checked,
+                  completed: element.data.completed
+                }
               );
 
               // Set selected category to 'All', refresh and pop page.
